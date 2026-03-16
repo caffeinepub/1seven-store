@@ -21,6 +21,13 @@ export function Nav() {
     setMobileOpen(false);
   }, [pathname]);
 
+  const navLinks = [
+    { label: "Home", to: "/" },
+    { label: "Products", to: "/products" },
+    { label: "Instagram", to: "/instagram" },
+    { label: "About", to: "/#about" },
+  ];
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
@@ -48,11 +55,7 @@ export function Nav() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
-            {[
-              { label: "Home", to: "/" },
-              { label: "Products", to: "/products" },
-              { label: "About", to: "/#about" },
-            ].map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
@@ -115,11 +118,7 @@ export function Nav() {
             className="md:hidden bg-background/98 backdrop-blur-md border-b border-border"
           >
             <nav className="flex flex-col px-6 py-6 gap-5">
-              {[
-                { label: "Home", to: "/" },
-                { label: "Products", to: "/products" },
-                { label: "About", to: "/#about" },
-              ].map((link) => (
+              {navLinks.map((link) => (
                 <Link
                   key={link.to}
                   to={link.to}

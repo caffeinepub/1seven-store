@@ -13,6 +13,7 @@ import { Nav } from "./components/Nav";
 import { CartProvider } from "./context/CartContext";
 import { Checkout } from "./pages/Checkout";
 import { Home } from "./pages/Home";
+import { Instagram } from "./pages/Instagram";
 import { ProductDetail } from "./pages/ProductDetail";
 import { Products } from "./pages/Products";
 
@@ -68,11 +69,18 @@ const checkoutRoute = createRoute({
   component: Checkout,
 });
 
+const instagramRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/instagram",
+  component: Instagram,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   productsRoute,
   productDetailRoute,
   checkoutRoute,
+  instagramRoute,
 ]);
 
 const router = createRouter({ routeTree });

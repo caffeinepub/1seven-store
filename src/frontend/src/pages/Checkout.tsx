@@ -3,16 +3,27 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "@tanstack/react-router";
-import { CheckCircle2, Lock, ShoppingBag } from "lucide-react";
+import {
+  Building2,
+  CheckCircle2,
+  CreditCard,
+  Lock,
+  ShoppingBag,
+  Smartphone,
+} from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
+
+type PaymentMethod = "upi" | "card" | "netbanking";
 
 export function Checkout() {
   const { items, total, clearCart } = useCart();
   const navigate = useNavigate();
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("upi");
+  const [upiId, setUpiId] = useState("");
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -36,8 +47,34 @@ export function Checkout() {
     }, 1800);
   };
 
-  const shipping = total > 150 ? 0 : 12.99;
+  const shipping = total > 3999 ? 0 : 199;
   const orderTotal = total + shipping;
+
+  const PAYMENT_METHODS: {
+    id: PaymentMethod;
+    label: string;
+    icon: React.ElementType;
+    desc: string;
+  }[] = [
+    {
+      id: "upi",
+      label: "UPI",
+      icon: Smartphone,
+      desc: "Pay via UPI ID or any UPI app",
+    },
+    {
+      id: "card",
+      label: "Card",
+      icon: CreditCard,
+      desc: "Debit / Credit card",
+    },
+    {
+      id: "netbanking",
+      label: "Net Banking",
+      icon: Building2,
+      desc: "All major Indian banks",
+    },
+  ];
 
   return (
     <main className="pt-24 pb-20 min-h-screen">
@@ -63,7 +100,7 @@ export function Checkout() {
                 Thank you for shopping with 1SEVEN.
               </p>
               <p className="font-body text-muted-foreground mb-10">
-                A confirmation email will be sent to{" "}
+                A confirmation will be sent to{" "}
                 <span className="text-gold">{form.email || "your email"}</span>.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -105,8 +142,9 @@ export function Checkout() {
                 {/* Form */}
                 <form
                   onSubmit={handleSubmit}
-                  className="lg:col-span-3 space-y-6"
+                  className="lg:col-span-3 space-y-8"
                 >
+                  {/* Contact */}
                   <section>
                     <h2 className="font-body text-xs font-semibold tracking-[0.3em] uppercase text-muted-foreground mb-5">
                       Contact Information
@@ -126,7 +164,7 @@ export function Checkout() {
                           value={form.name}
                           onChange={handleChange}
                           required
-                          placeholder="Marcus King"
+                          placeholder="Arjun Sharma"
                           className="bg-card border-border font-body text-sm h-12 rounded-none focus:border-gold focus:ring-gold/20"
                         />
                       </div>
@@ -145,13 +183,14 @@ export function Checkout() {
                           value={form.email}
                           onChange={handleChange}
                           required
-                          placeholder="marcus@example.com"
+                          placeholder="arjun@example.com"
                           className="bg-card border-border font-body text-sm h-12 rounded-none focus:border-gold focus:ring-gold/20"
                         />
                       </div>
                     </div>
                   </section>
 
+                  {/* Shipping */}
                   <section>
                     <h2 className="font-body text-xs font-semibold tracking-[0.3em] uppercase text-muted-foreground mb-5">
                       Shipping Address
@@ -171,7 +210,7 @@ export function Checkout() {
                           value={form.address}
                           onChange={handleChange}
                           required
-                          placeholder="123 Crown Street"
+                          placeholder="42 MG Road"
                           className="bg-card border-border font-body text-sm h-12 rounded-none focus:border-gold focus:ring-gold/20"
                         />
                       </div>
@@ -190,7 +229,7 @@ export function Checkout() {
                             value={form.city}
                             onChange={handleChange}
                             required
-                            placeholder="New York"
+                            placeholder="Mumbai"
                             className="bg-card border-border font-body text-sm h-12 rounded-none focus:border-gold focus:ring-gold/20"
                           />
                         </div>
@@ -199,7 +238,7 @@ export function Checkout() {
                             htmlFor="zip"
                             className="font-body text-xs tracking-wider uppercase text-muted-foreground"
                           >
-                            ZIP Code
+                            PIN Code
                           </Label>
                           <Input
                             id="zip"
@@ -208,7 +247,7 @@ export function Checkout() {
                             value={form.zip}
                             onChange={handleChange}
                             required
-                            placeholder="10001"
+                            placeholder="400001"
                             className="bg-card border-border font-body text-sm h-12 rounded-none focus:border-gold focus:ring-gold/20"
                           />
                         </div>
@@ -227,24 +266,174 @@ export function Checkout() {
                           value={form.country}
                           onChange={handleChange}
                           required
-                          placeholder="United States"
+                          placeholder="India"
                           className="bg-card border-border font-body text-sm h-12 rounded-none focus:border-gold focus:ring-gold/20"
                         />
                       </div>
                     </div>
                   </section>
 
-                  {/* Stripe placeholder */}
-                  <div className="border border-gold/30 bg-gold/5 p-4 flex items-center gap-3">
-                    <Lock className="w-4 h-4 text-gold flex-shrink-0" />
-                    <p className="font-body text-xs text-muted-foreground">
-                      Payments are secure and encrypted.{" "}
-                      <span className="text-gold font-medium">
-                        Powered by Stripe
+                  {/* Payment */}
+                  <section>
+                    <h2 className="font-body text-xs font-semibold tracking-[0.3em] uppercase text-muted-foreground mb-5">
+                      Payment Method
+                    </h2>
+
+                    {/* Razorpay badge */}
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="flex items-center gap-1.5 bg-[#2d6ae0]/10 border border-[#2d6ae0]/30 px-3 py-1.5 rounded-sm">
+                        <div className="w-2 h-2 rounded-full bg-[#2d6ae0]" />
+                        <span className="font-body text-xs font-semibold text-[#2d6ae0] tracking-wide">
+                          Secured by Razorpay
+                        </span>
+                      </div>
+                      <Lock className="w-3.5 h-3.5 text-muted-foreground" />
+                      <span className="font-body text-xs text-muted-foreground">
+                        256-bit SSL
                       </span>
-                      . Your payment information is never stored.
-                    </p>
-                  </div>
+                    </div>
+
+                    {/* Method selector */}
+                    <div className="grid grid-cols-3 gap-2 mb-5">
+                      {PAYMENT_METHODS.map(({ id, label, icon: Icon }) => (
+                        <button
+                          key={id}
+                          type="button"
+                          data-ocid={`checkout.${id}_tab`}
+                          onClick={() => setPaymentMethod(id)}
+                          className={`flex flex-col items-center gap-1.5 py-3 px-2 border transition-all duration-200 ${
+                            paymentMethod === id
+                              ? "border-gold bg-gold/10 text-gold"
+                              : "border-border text-muted-foreground hover:border-gold/40 hover:text-foreground"
+                          }`}
+                        >
+                          <Icon className="w-5 h-5" />
+                          <span className="font-body text-xs tracking-wider uppercase font-medium">
+                            {label}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* UPI */}
+                    {paymentMethod === "upi" && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="space-y-4"
+                      >
+                        <div className="space-y-2">
+                          <Label className="font-body text-xs tracking-wider uppercase text-muted-foreground">
+                            UPI ID
+                          </Label>
+                          <Input
+                            data-ocid="checkout.upi_input"
+                            value={upiId}
+                            onChange={(e) => setUpiId(e.target.value)}
+                            placeholder="yourname@upi"
+                            className="bg-card border-border font-body text-sm h-12 rounded-none focus:border-gold focus:ring-gold/20"
+                          />
+                          <p className="font-body text-xs text-muted-foreground">
+                            Enter your UPI ID linked to GPay, PhonePe, Paytm, or
+                            any UPI app.
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="h-px flex-1 bg-border" />
+                          <span className="font-body text-xs text-muted-foreground uppercase tracking-wider">
+                            UPI apps accepted
+                          </span>
+                          <div className="h-px flex-1 bg-border" />
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {["GPay", "PhonePe", "Paytm", "BHIM"].map((app) => (
+                            <span
+                              key={app}
+                              className="font-body text-xs border border-border px-3 py-1.5 text-muted-foreground bg-card"
+                            >
+                              {app}
+                            </span>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* Card */}
+                    {paymentMethod === "card" && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="space-y-4"
+                      >
+                        <div className="space-y-2">
+                          <Label className="font-body text-xs tracking-wider uppercase text-muted-foreground">
+                            Card Number
+                          </Label>
+                          <Input
+                            data-ocid="checkout.card_input"
+                            placeholder="1234 5678 9012 3456"
+                            className="bg-card border-border font-body text-sm h-12 rounded-none focus:border-gold focus:ring-gold/20"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="font-body text-xs tracking-wider uppercase text-muted-foreground">
+                              Expiry
+                            </Label>
+                            <Input
+                              placeholder="MM / YY"
+                              className="bg-card border-border font-body text-sm h-12 rounded-none focus:border-gold focus:ring-gold/20"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="font-body text-xs tracking-wider uppercase text-muted-foreground">
+                              CVV
+                            </Label>
+                            <Input
+                              placeholder="•••"
+                              type="password"
+                              maxLength={4}
+                              className="bg-card border-border font-body text-sm h-12 rounded-none focus:border-gold focus:ring-gold/20"
+                            />
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* Net Banking */}
+                    {paymentMethod === "netbanking" && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="space-y-3"
+                      >
+                        {[
+                          "SBI",
+                          "HDFC Bank",
+                          "ICICI Bank",
+                          "Axis Bank",
+                          "Kotak Bank",
+                        ].map((bank) => (
+                          <label
+                            key={bank}
+                            className="flex items-center gap-3 p-3 border border-border hover:border-gold/40 cursor-pointer group transition-all duration-200"
+                          >
+                            <input
+                              type="radio"
+                              name="bank"
+                              className="accent-[#c9a84c]"
+                            />
+                            <span className="font-body text-sm text-foreground group-hover:text-gold transition-colors">
+                              {bank}
+                            </span>
+                          </label>
+                        ))}
+                      </motion.div>
+                    )}
+                  </section>
 
                   <Button
                     type="submit"
@@ -261,7 +450,7 @@ export function Checkout() {
                         Processing...
                       </span>
                     ) : (
-                      "Place Order"
+                      `Pay ₹${orderTotal.toLocaleString()} via ${paymentMethod === "upi" ? "UPI" : paymentMethod === "card" ? "Card" : "Net Banking"}`
                     )}
                   </Button>
                 </form>
@@ -274,6 +463,16 @@ export function Checkout() {
                       <h2 className="font-body text-xs font-semibold tracking-[0.3em] uppercase text-muted-foreground">
                         Order Summary
                       </h2>
+                    </div>
+
+                    {/* 20% off badge */}
+                    <div className="flex items-center gap-2 mb-4 bg-gold/10 border border-gold/30 px-3 py-2">
+                      <span className="font-body text-xs font-bold text-gold tracking-wider">
+                        20% OFF
+                      </span>
+                      <span className="font-body text-xs text-muted-foreground">
+                        applied to all items
+                      </span>
                     </div>
 
                     {items.length === 0 ? (
@@ -301,12 +500,26 @@ export function Checkout() {
                               <p className="font-body text-xs text-muted-foreground">
                                 {item.size} × {item.quantity}
                               </p>
-                              <p className="font-display font-semibold text-gold mt-1">
-                                $
-                                {(item.product.price * item.quantity).toFixed(
-                                  2,
+                              <div className="flex items-center gap-2 mt-1">
+                                <p className="font-display font-semibold text-gold">
+                                  ₹
+                                  {(
+                                    item.product.price * item.quantity
+                                  ).toLocaleString()}
+                                </p>
+                                {"originalPrice" in item.product && (
+                                  <p className="font-body text-xs text-muted-foreground line-through">
+                                    ₹
+                                    {(
+                                      (
+                                        item.product as {
+                                          originalPrice: number;
+                                        }
+                                      ).originalPrice * item.quantity
+                                    ).toLocaleString()}
+                                  </p>
                                 )}
-                              </p>
+                              </div>
                             </div>
                           </li>
                         ))}
@@ -317,7 +530,7 @@ export function Checkout() {
                     <div className="space-y-2 font-body text-sm">
                       <div className="flex justify-between text-muted-foreground">
                         <span>Subtotal</span>
-                        <span>${total.toFixed(2)}</span>
+                        <span>₹{total.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between text-muted-foreground">
                         <span>Shipping</span>
@@ -325,7 +538,7 @@ export function Checkout() {
                           {shipping === 0 ? (
                             <span className="text-gold">Free</span>
                           ) : (
-                            `$${shipping.toFixed(2)}`
+                            `₹${shipping.toLocaleString()}`
                           )}
                         </span>
                       </div>
@@ -333,10 +546,14 @@ export function Checkout() {
                       <div className="flex justify-between font-semibold text-base">
                         <span className="font-body">Total</span>
                         <span className="font-display text-gold">
-                          ${orderTotal.toFixed(2)}
+                          ₹{orderTotal.toLocaleString()}
                         </span>
                       </div>
                     </div>
+
+                    <p className="font-body text-xs text-muted-foreground mt-4 text-center">
+                      Free delivery on orders over ₹3,999
+                    </p>
                   </div>
                 </div>
               </div>

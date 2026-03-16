@@ -29,15 +29,13 @@ export function Footer() {
               the crown without asking for permission.
             </p>
             <div className="flex items-center gap-4 mt-6">
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to="/instagram"
                 aria-label="Instagram"
                 className="text-muted-foreground hover:text-gold transition-colors duration-200"
               >
                 <SiInstagram className="w-5 h-5" />
-              </a>
+              </Link>
               <a
                 href="https://x.com"
                 target="_blank"

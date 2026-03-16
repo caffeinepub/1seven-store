@@ -109,9 +109,17 @@ export function ProductDetail() {
             <h1 className="font-display font-bold text-3xl md:text-4xl mb-4">
               {product.name}
             </h1>
-            <p className="font-display text-3xl font-semibold text-gold mb-6">
-              ${product.price}
-            </p>
+            <div className="flex items-center gap-3 mb-6">
+              <p className="font-display text-3xl font-semibold text-gold">
+                ₹{product.price.toLocaleString()}
+              </p>
+              <p className="font-body text-lg text-muted-foreground line-through">
+                ₹{product.originalPrice.toLocaleString()}
+              </p>
+              <span className="bg-destructive text-white font-body text-xs tracking-wider px-2 py-1">
+                20% OFF
+              </span>
+            </div>
             <p className="font-body text-sm text-muted-foreground leading-relaxed mb-8">
               {product.description}
             </p>
@@ -209,7 +217,7 @@ export function ProductDetail() {
                   Shipping &amp; Returns
                 </h4>
                 <p className="font-body text-sm text-muted-foreground mt-2 leading-relaxed">
-                  Free standard shipping on orders over $150. Express delivery
+                  Free standard shipping on orders over ₹4,999. Express delivery
                   available. Returns accepted within 30 days.
                 </p>
               </div>
@@ -251,9 +259,14 @@ export function ProductDetail() {
                     <h3 className="font-body font-medium text-sm group-hover:text-gold transition-colors mt-0.5">
                       {rp.name}
                     </h3>
-                    <p className="font-display font-semibold text-gold mt-1">
-                      ${rp.price}
-                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="font-display font-semibold text-gold">
+                        ₹{rp.price.toLocaleString()}
+                      </p>
+                      <p className="font-body text-xs text-muted-foreground line-through">
+                        ₹{rp.originalPrice.toLocaleString()}
+                      </p>
+                    </div>
                   </Link>
                 </motion.div>
               ))}

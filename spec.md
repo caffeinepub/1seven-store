@@ -1,33 +1,26 @@
 # 1seven Store
 
 ## Current State
-New project — no existing code.
+- 20 products across 4 categories: Tops, Bottoms, Outerwear, Essentials
+- Sale banner already exists (gold strip, '40% Off Everything')
+- No suits, shoes categories; limited polo/hoodie variety
 
 ## Requested Changes (Diff)
 
 ### Add
-- Full e-commerce website for men's clothing and essentials under the brand "1seven"
-- Unique lion symbol logo (generated)
-- Product catalog with categories: Tops, Bottoms, Outerwear, Essentials/Accessories
-- Product listing page with filters (category, price range)
-- Product detail page with size selector, quantity selector, and add-to-cart
-- Shopping cart (slide-over/drawer)
-- Checkout flow with Stripe payments
-- User authentication (login/register) for order history
-- Admin panel to manage products (add, edit, delete)
-- Hero/landing section with brand identity
-- About / brand story section
-- Footer with brand links
+- Prominent 40% sitewide sale banner (larger, more impactful — sticky or hero-level announcement)
+- New products: polo shirts (multiple colors/styles), hoodies (pullover, zip-up varieties), formal suits (2-piece, blazer), shoes (sneakers, formal, loafers)
+- New categories: 'Suits' and 'Shoes' in the products filter
 
 ### Modify
-- N/A (new project)
+- Existing sale banner: make it bolder and more eye-catching
+- Products page: update category filter to include Suits, Shoes
 
 ### Remove
-- N/A (new project)
+- Nothing
 
 ## Implementation Plan
-1. Backend: Product catalog (CRUD), cart, orders, user roles (admin/customer)
-2. Frontend: Landing page, product listing, product detail, cart drawer, checkout, auth, admin panel
-3. Stripe integration for payments
-4. Authorization for user/admin access control
-5. Blob storage for product images
+1. Add 10+ new products to products data: 2-3 polo shirts, 2-3 hoodies, 2-3 suits/blazers, 3-4 shoes
+2. Add 'Suits' and 'Shoes' to CATEGORIES array
+3. Upgrade sale banner: make it a full-width animated banner with countdown feel, bolder typography
+4. Generate product images for new items
